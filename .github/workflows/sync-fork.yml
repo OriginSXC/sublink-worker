@@ -1,0 +1,24 @@
+name: 'Official Fork Sync'
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # 每天北京时间上午 8:00 自动运行
+  workflow_dispatch:     # 允许你手动点击按钮触发同步
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. 使用你的 PAT 检出仓库
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.MY_PAT }}
+
+      # 2. 调用 GitHub 官方命令行工具进行同步
+      - name: Sync Upstream
+        env:
+          GH_TOKEN: ${{ secrets.MY_PAT }}
+        run: |
+          # 自动同步上游的 main 分支到你本地的 main
+          gh repo sync ${{ github.repository }} -b main
